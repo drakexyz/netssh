@@ -1,0 +1,3 @@
+SINCRONIZAR PAINEL WEB
+
+bash <(wget -qO- sshplus.xyz/scripts/utilitarios/syncpainel/inst)

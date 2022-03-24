@@ -1,0 +1,360 @@
+#!/bin/bash
+
+fun_bar() {
+          comando[0]="$1"
+          comando[1]="$2"
+          (
+          [[ -e $HOME/fim ]] && rm $HOME/fim
+          ${comando[0]} > /dev/null 2>&1
+          ${comando[1]} > /dev/null 2>&1
+          toque em $HOME/fim
+          ) > /dev/null 2>&1 &
+          tput civis
+		  echo -e "\033[1;31m----------------------------- -----------\033[1;37m"
+          echo -ne "${col7} ESPERE..\033[1;35m["
+          enquanto verdadeiro; Faz
+          for((i=0; i<18; i++)); Faz
+          echo -ne "\033[1;34m#"
+          dormir 0,2s
+          feito
+         [[ -e $HOME/fim ]] && rm $HOME/fim && break
+         echo -e "${col5}"
+         dormir 1s
+         tput cuu1
+         tput dl1
+         echo -ne "\033[1;37m ESPERE..\033[1;35m["
+         feito
+         echo -e "\033[1;35m]\033[1;37m -\033[1;32m INSTALADO !\033[1;37m"
+         tput cnorm
+		 echo -e "\033[1;31m----------------------------- -----------\033[1;37m"
+        }
+        
+
+limpar&&limpar
+echo -e "\033[1;31mâ€¦—â€¦â€¦â€¦â€¦â€¦â€¦â€¦â€¦â€¦â€¦ ”------------------------------ ------------------------ —————\033[1;37m"
+echo -e "\033[1;32m PAYLOAD + SSL |by: LAG13"
+echo -e "\033[1;31mâ€¦—â€¦â€¦â€¦â€¦â€¦â€¦â€¦â€¦â€¦â€¦ ”------------------------------ ------------------------ —————\033[1;37m"
+echo -e "\033[1;36m SCRIPT AUTOCONFIGURACION "
+echo -e "\033[1;31mâ€¦—â€¦â€¦â€¦â€¦â€¦â€¦â€¦â€¦â€¦â€¦ ”------------------------------ ------------------------ —————\033[1;37m"
+echo -e "\033[1;37mRequiere tener el puerto libre ,80 y el 443"
+eco
+echo -e "\033[1;33m INSTALANDO SSL..."
+inst_ssl() {
+
+apt-get install stunnel4 -y
+echo -e "cliente = no\n[SSL]\ncert = /etc/stunnel/stunnel.pem\naccept = 443 \nconnect = 127.0.0.1:80" > /etc/stunnel/stunnel.conf
+openssl genrsa -out stunnel.key 2048 > /dev/null 2>&1
+(echo "" ; echo "" ; echo "" ; echo "" ; echo "" ; echo "" ; echo "@cloudflare" )|openssl req -new -key stunnel.key -x509 -days 1000 -out stunnel. crt
+cat stunnel.crt stunnel.key > stunnel.pem
+mv stunnel.pem /etc/stunnel/
+sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
+reinicialização do serviço stunnel4
+rm -rf /etc/ger-frm/stunnel.crt
+rm -rf /etc/ger-frm/stunnel.key
+rm -rf /root/stunnel.crt
+rm -rf /root/stunnel.key
+
+}
+fun_bar 'inst_ssl'
+echo -e "\033[1;33m CONFIGURANDO SSL.."
+fun_bar 'inst_ssl'
+echo -e "\033[1;37m Mensagem no mini Banner por defeito (SSL + Pay) \033[1;36m"
+echo -e "\033[1;37m Não exagere no mini Banner \033[1;36m"
+echo -e "\e[0;31m Suporta HTML\e[0m"
+leia -p ":" msgbanner
+[[ "$msgbanner" = "" ]]&& msgbanner="SSL + Pagar"
+eco
+echo -e "\033[1;33m CONFIGURANDO PYTHON.."
+inst_py() {
+
+pkill -f 80
+pkill python
+apt instalar python -y
+apt install screen -y
+
+pt=$(netstat -nplt |grep 'sshd' | awk -F ":" NR==1{'print $2'} | cut -d " " -f 1)
+
+ cat <<EOF> proxy.py
+soquete de importação, encadeamento, encadeamento, selecionar, sinal, sys, tempo, getopt
+
+# CONFIGURAÇÃO
+LISTENING_ADDR = '0.0.0.0'
+LISTENING_PORT = 1080
+PASSE = ''
+
+# CONST
+BUFLEN = 4096 * 4
+TEMPO LIMITE = 60
+DEFAULT_HOST = "127.0.0.1:$pt"
+RESPONSE = 'HTTP/1.1 101 $msgbanner \r\n\r\n'
+
+class Servidor(threading.Thread):
+    def __init__(self, host, port):
+        threading.Thread.__init__(self)
+        self.running = False
+        self.host = host
+        self.port = porta
+        self.threads = []
+	self.threadsLock = threading.Lock()
+	self.logLock = threading.Lock()
+
+    def executar(auto):
+        self.soc = socket.socket(socket.AF_INET)
+        self.soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.soc.settimeout(2)
+        self.soc.bind((self.host, self.port))
+        self.soc.listen(0)
+        self.running = True
+
+        experimentar:                    
+            enquanto self.running:
+                experimentar:
+                    c, addr = self.soc.accept()
+                    c.setblocking(1)
+                exceto socket.timeout:
+                    Prosseguir
+                
+                conn = ConnectionHandler(c, self, addr)
+                conn.start();
+                self.addConn(conn)
+        finalmente:
+            self.running = False
+            self.soc.close()
+            
+    def printLog(self, log):
+        self.logLock.acquire()
+        imprimir log
+        self.logLock.release()
+	
+    def addConn(self, conn):
+        experimentar:
+            self.threadsLock.acquire()
+            se self.running:
+                self.threads.append(conn)
+        finalmente:
+            self.threadsLock.release()
+                    
+    def removeConn(self, conn):
+        experimentar:
+            self.threadsLock.acquire()
+            self.threads.remove(conn)
+        finalmente:
+            self.threadsLock.release()
+                
+    def fechar(auto):
+        experimentar:
+            self.running = False
+            self.threadsLock.acquire()
+            
+            threads = list(self.threads)
+            para c em threads:
+                c.fechar()
+        finalmente:
+            self.threadsLock.release()
+			
+
+class ConnectionHandler(threading.Thread):
+    def __init__(self, socClient, server, addr):
+        threading.Thread.__init__(self)
+        self.clientClosed = False
+        self.targetClosed = True
+        self.client = socClient
+        self.client_buffer = ''
+        self.server = servidor
+        self.log = 'Conexão: ' + str(addr)
+
+    def fechar(auto):
+        experimentar:
+            se não self.clientClosed:
+                self.client.shutdown(socket.SHUT_RDWR)
+                self.client.close()
+        exceto:
+            passar
+        finalmente:
+            self.clientClosed = Verdadeiro
+            
+        experimentar:
+            se não for self.targetClosed:
+                self.target.shutdown(socket.SHUT_RDWR)
+                self.target.close()
+        exceto:
+            passar
+        finalmente:
+            self.targetClosed = True
+
+    def executar(auto):
+        experimentar:
+            self.client_buffer = self.client.recv(BUFLEN)
+        
+            hostPort = self.findHeader(self.client_buffer, 'X-Real-Host')
+            
+            if hostPort == '':
+                hostPort = DEFAULT_HOST
+
+            split = self.findHeader(self.client_buffer, 'X-Split')
+
+            se dividido != '':
+                self.client.recv(BUFLEN)
+            
+            if hostPort != '':
+                passwd = self.findHeader(self.client_buffer, 'X-Pass')
+				
+                if len(PASS) != 0 e passwd == PASS:
+                    self.method_CONNECT(hostPort)
+                elif len(PASS) != 0 e passwd != PASS:
+                    self.client.send('HTTP/1.1 400 WrongPass!\r\n\r\n')
+                elif hostPort.startswith('127.0.0.1') ou hostPort.startswith('localhost'):
+                    self.method_CONNECT(hostPort)
+                outro:
+                    self.client.send('HTTP/1.1 403 Proibido!\r\n\r\n')
+            outro:
+                print '- Sem X-Real-Host!'
+                self.client.send('HTTP/1.1 400 NoXRealHost!\r\n\r\n')
+
+        exceto Exceção como e:
+            self.log += ' - erro: ' + e.strerror
+            self.server.printLog(self.log)
+	    passar
+        finalmente:
+            self.close()
+            self.server.removeConn(self)
+
+    def findHeader(self, head, header):
+        aux = head.find(header + ': ')
+    
+        se auxiliar == -1:
+            Retorna ''
+
+        aux = head.find(':', aux)
+        cabeça = cabeça[aux+2:]
+        aux = head.find('\r\n')
+
+        se auxiliar == -1:
+            Retorna ''
+
+        return head[:aux];
+
+    def connect_target(self, host):
+        i = host.find(':')
+        se eu != -1:
+            porta = int(host[i+1:])
+            host = host[:i]
+        outro:
+            if self.method=='CONECTAR':
+                porta = 443
+            outro:
+                porta = 80
+
+        (soc_family, soc_type, proto, _, address) = socket.getaddrinfo(host, port)[0]
+
+        self.target = socket.socket(soc_family, soc_type, proto)
+        self.targetClosed = False
+        self.target.connect(endereço)
+
+    def método_CONNECT(self, caminho):
+        self.log += ' - CONECTAR ' + caminho
+        
+        self.connect_target(caminho)
+        self.client.sendall(RESPOSTA)
+        self.client_buffer = ''
+
+        self.server.printLog(self.log)
+        self.doCONNECT()
+
+    def doCONNECT(self):
+        socs = [self.client, self.target]
+        contagem = 0
+        erro = falso
+        enquanto Verdadeiro:
+            contar += 1
+            (recv, _, err) = select.select(socs, [], socs, 3)
+            se errar:
+                erro = Verdadeiro
+            se receber:
+                para in_ em recv:
+		    experimentar:
+                        dados = in_.recv(BUFLEN)
+                        se dados:
+			    se in_ for self.target:
+				self.client.send(data)
+                            outro:
+                                enquanto dados:
+                                    byte = self.target.send(data)
+                                    dados = dados[byte:]
+
+                            contagem = 0
+			outro:
+			    pausa
+		    exceto:
+                        erro = Verdadeiro
+                        pausa
+            se contar == TIMEOUT:
+                erro = Verdadeiro
+
+            se erro:
+                pausa
+
+
+def print_usage():
+    print 'Uso: proxy.py -p <port>'
+    print ' proxy.py -b <bindAddr> -p <port>'
+    print 'proxy.py -b 0.0.0.0 -p 1080'
+
+def parse_args(argv):
+    global LISTENING_ADDR
+    global LISTENING_PORT
+    
+    experimentar:
+        opts, args = getopt.getopt(argv,"hb:p:",["bind=","port="])
+    exceto getopt.GetoptError:
+        print_usage()
+        sys.exit(2)
+    para opt, arg em opts:
+        if opt == '-h':
+            print_usage()
+            sys.exit()
+        elif opt in ("-b", "--bind"):
+            LISTENING_ADDR = arg
+        elif opt in ("-p", "--port"):
+            LISTENING_PORT = int(arg)
+    
+
+def main(host=LISTENING_ADDR, porta=LISTENING_PORT):
+    
+    print "\n ==============================\n"
+    print "\n PROXY PYTHON \n"
+    print "\n ==============================\n"
+    print "corrigindo ip: " + LISTENING_ADDR
+    print "corriendo porta: " + str(LISTENING_PORT) + "\n"
+    print "Se ha Iniciado Por Favor Cierre el Terminal\n"
+    
+    servidor = Servidor(LISTENING_ADDR, LISTENING_PORT)
+    server.start()
+
+    enquanto Verdadeiro:
+        experimentar:
+            hora.dormir(2)
+        exceto KeyboardInterrupt:
+            imprima 'Parando...'
+            server.close()
+            pausa
+    
+if __name__ == '__main__':
+    parse_args(sys.argv[1:])
+    a Principal()
+EOF
+
+screen -dmS pythonwe python proxy.py -p 80&
+
+}
+fun_bar 'inst_py'
+rm -rf proxy.py
+echo -e " INSTALAÇÃO TERMINADA"
+eco
+echo -e "Solucionado el erro de conectividad mediante el puerto 443 con SNI"
+eco
+echo -e "\e[0;31m por:LAG13\e[0m"
+
+eco
+
+
